@@ -1,0 +1,70 @@
+use16
+org 0x100
+
+mov ah, 0x9
+mov dx, msg1
+int 0x21
+
+mov dx,0
+
+mov ax, 0xD2A8
+mov bx, 0xA1D9
+mov dh, ah
+
+mov cl, 4
+lp:
+	mov dl, dh
+	and dl, 0xF0
+	shr dl, 4
+	cmp dl, 0x9
+	ja m1
+	add dl, 0x30
+	jmp m2
+
+m1:
+	add dl, 0x37
+
+m2:
+	mov ah, 0x2
+	mov ch, al
+	int 0x21
+	mov al, ch
+	mov ch, 0
+
+	mov dl, dh
+	mov dh, al
+
+	and dl, 0xF
+	cmp dl, 0x9
+	ja m3
+	add dl, 0x30
+	jmp m4
+
+m3:
+    	add dl, 0x37
+m4:
+    	mov ah, 0x2
+	mov ch, al
+	int 0x21
+	mov al, ch
+	mov ch, 0
+	cmp cl, 3
+	je swap
+	loop lp
+	int 20h
+
+swap:
+	mov ah, 0x9
+	mov dx, msg2
+	int 0x21
+	
+	mov dx,0
+	mov ax,bx
+	mov dh, ah
+	mov bx, 0;
+	mov cl, 2
+	jmp lp
+
+msg1: db 'AX=0x$'
+
+msg2: db 0xD, 0xA, 'BX=0x$'
